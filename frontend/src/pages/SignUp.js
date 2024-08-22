@@ -1,8 +1,11 @@
 import React, { useState } from 'react'
 import loginIcons from '../assest/signin.gif'
 import { FaEye, FaEyeSlash} from "react-icons/fa";
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import imageTobase64 from '../helpers/imageTobase64';
+import SummaryApi from '../common';
+import { toast } from 'react-toastify';
+
 const SignUp = () => {
     const [showPassword, setShowPassword] = useState(false)
     const [showConfirmPassword, setShowConfirmPassword] = useState(false)
@@ -13,6 +16,7 @@ const SignUp = () => {
         confirmPassword : "",
         profilePic: ""
     })
+    const navigate = useNavigate()
     const handleOnChange=(e) => {
         const { name , value} = e.target
         setData((preve) =>{
@@ -22,8 +26,27 @@ const SignUp = () => {
             }
         })
     }
-    const handeleSubmit =(e)=> {
+    const handleSubmit =async(e)=> {
         e.preventDefault()
+        if(data.password ===  data.confirmPassword){
+            const dataResponse = await fetch(SummaryApi.signUp.url,{
+                method: SummaryApi.signUp.method,
+                headers: {
+                    'content-type': 'application/json'
+                },
+                body : JSON.stringify(data)
+            })
+            const dataApi = await dataResponse.json()
+            
+            if(dataApi.success){
+                toast.success(dataApi.message)
+                navigate("/login")
+            }else if(dataApi.error){
+                toast.error(dataApi.message)
+            }
+        }else{
+            console.log("Please check the password and confirm password")
+        }
     }
 
     const handleUploadPic = async(e) =>{
@@ -39,7 +62,7 @@ const SignUp = () => {
         })
     }
 
-    console.log("data login",data)
+ 
   return (
     <section id='signup'>
     <div className='mx-auto container p-4'>
@@ -61,7 +84,7 @@ const SignUp = () => {
              
              </div>
 
-             <form className='pt-6 flex flex-col gap-2' onSubmit={handeleSubmit}>
+             <form className='pt-6 flex flex-col gap-2' onSubmit={handleSubmit}>
                 <div className='grid'>
                         <label>Name: </label>
                         <div className='bg-slate-100 p-2'>
@@ -97,10 +120,11 @@ const SignUp = () => {
                         value={data.password}
                         name='password'
                         onChange={handleOnChange}
-                        readOnly
+                        required
                      
                         className='w-full h-full outline-none bg-transparent'/>
-                        <div className='cursor-pointer text-xl' onClick={() => setShowPassword((preve)=>!preve)}>
+                        <div className='cursor-pointer text-xl' onClick={() =>
+                             setShowPassword((preve)=>!preve)}>
                             <span>
                                 {
                                     showPassword ? (
@@ -126,7 +150,8 @@ const SignUp = () => {
                         onChange={handleOnChange}
                         required
                         className='w-full h-full outline-none bg-transparent'/>
-                        <div className='cursor-pointer text-xl' onClick={() => setShowConfirmPassword((preve)=>!preve)}>
+                        <div className='cursor-pointer text-xl' onClick={() =>      
+                            setShowConfirmPassword((preve)=>!preve)}>
                             <span>
                                 {
                                     showConfirmPassword ? (

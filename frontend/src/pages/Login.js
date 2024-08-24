@@ -1,7 +1,11 @@
-import React, { useState } from 'react'
+import React, { useContext, useState } from 'react'
 import loginIcons from '../assest/signin.gif'
 import { FaEye, FaEyeSlash} from "react-icons/fa";
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+import SummaryApi from '../common';
+import { toast } from 'react-toastify';
+import Context from '../context';
+
 
 const Login = () => {
     const [showPassword, setShowPassword] = React.useState(false)
@@ -9,6 +13,12 @@ const Login = () => {
         email: "",
         password : ""
     })
+
+    const navigate = useNavigate()
+    
+    const {fetchUserDetails}  = useContext(Context)
+
+
     const handleOnChange=(e) => {
         const { name , value} = e.target
 
@@ -20,8 +30,28 @@ const Login = () => {
         })
 
     }
-    const handeleSubmit =(e)=> {
+    const handeleSubmit = async(e)=> {
         e.preventDefault()
+
+        const dataResponse = await fetch(SummaryApi.signIn.url, {
+            method: SummaryApi.signIn.method,
+            credentials: 'include',
+
+            headers: {
+                'content-type': 'application/json'
+            },
+            body: JSON.stringify(data)
+        })
+
+        const dataApi = await dataResponse.json()
+        if(dataApi.success){
+            toast.success(dataApi.message)
+         
+            navigate("/")
+            fetchUserDetails()
+        }else if(dataApi.error){
+            toast.error(dataApi.message)
+        }
     }
 
     console.log("data login",data)

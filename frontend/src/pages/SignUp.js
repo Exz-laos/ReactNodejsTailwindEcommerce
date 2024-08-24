@@ -26,8 +26,23 @@ const SignUp = () => {
             }
         })
     }
-    const handleSubmit =async(e)=> {
+ 
+
+    const handleUploadPic = async(e) =>{
+        const file = e.target.files[0]
+
+        const imagePic = await imageTobase64(file)
+
+        setData((preve) =>{
+            return{
+                ...preve,
+                profilePic : imagePic
+            }
+        })
+    }
+    const handleSubmit = async(e)=> {
         e.preventDefault()
+
         if(data.password ===  data.confirmPassword){
             const dataResponse = await fetch(SummaryApi.signUp.url,{
                 method: SummaryApi.signUp.method,
@@ -41,25 +56,13 @@ const SignUp = () => {
             if(dataApi.success){
                 toast.success(dataApi.message)
                 navigate("/login")
+                
             }else if(dataApi.error){
                 toast.error(dataApi.message)
             }
         }else{
             console.log("Please check the password and confirm password")
         }
-    }
-
-    const handleUploadPic = async(e) =>{
-        const file = e.target.files[0]
-
-        const imagePic = await imageTobase64(file)
-
-        setData((preve) =>{
-            return{
-                ...preve,
-                profilePic : imagePic
-            }
-        })
     }
 
  
@@ -180,3 +183,6 @@ const SignUp = () => {
 }
 
 export default SignUp
+
+
+

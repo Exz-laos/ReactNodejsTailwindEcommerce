@@ -23,5 +23,4 @@ async function userDetailsController(req,res){
 
     }
 }
-
 module.exports = userDetailsController 

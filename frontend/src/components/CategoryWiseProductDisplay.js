@@ -4,13 +4,12 @@ import displayKIPCurrency from '../helpers/displayCurrency'
 import { FaAngleLeft, FaAngleRight } from 'react-icons/fa6'
 import addToCart from '../helpers/addToCart'
 import { Link } from 'react-router-dom'
-const VerticalCardProduct = ({category, heading}) => {
+const CategoryWiseProductDisplay = ({category, heading}) => {
     const [data,setData] = useState([])
     const [loading,setLoading] = useState(true)
     const loadingList = new Array(13).fill(null)
 
-    const [scroll,setScroll] = useState(0) 
-    const scrollElement = useRef()
+    
 
     const fetchData = async() =>{
         setLoading(true)
@@ -26,27 +25,16 @@ const VerticalCardProduct = ({category, heading}) => {
         fetchData()
     },[])
      
-    const scrollRight = () =>{
-        scrollElement.current.scrollLeft += 300
-    }
-    const scrollLeft = () =>{
-        scrollElement.current.scrollLeft -= 300
-    }
+
 
 
   return (
     <div className='container mx-auto px-4 my-6 relative'>
         <h2 className='text-2xl font-semibold py-4'>{heading}</h2>
       
-       <div className='flex items-center gap-4 md:gap-6 overflow-x-scroll scrollbar-none transition-all'
-        ref={scrollElement}>
-         
-            <button  className='bg-white shadow-md rounded-full p-1 absolute left-0 text-lg hidden md:block'
-                onClick={scrollLeft} >  <FaAngleLeft/>  
-            </button>
-            <button  className='bg-white shadow-md rounded-full p-1 absolute right-0 text-lg hidden md:block' 
-                 onClick={scrollRight}>  <FaAngleRight/>
-            </button> 
+       <div className='grid grid-cols-[repeat(auto-fit,minmax(300px,320px))] 
+       justify-between md:gap-6 overflow-x-scroll scrollbar-none transition-all'
+        >
         {  
            loading ? (
             loadingList.map((product,index)=>{
@@ -77,7 +65,7 @@ const VerticalCardProduct = ({category, heading}) => {
            ):(
             data.map((product,index)=>{
                 return (
-                <Link to={"product/" + product?._id} 
+                <Link to={`/product/${product?._id}`}
                 className='w-full min-w-[280px] md:min-w-[320px] max-w-[280px] 
                     md:max-w-[320px] bg-white rounded-sm shadow'>
                     <div className='bg-slate-200 h-56 p-4 min-w-[280px] md:min-w-[145px] 
@@ -99,7 +87,7 @@ const VerticalCardProduct = ({category, heading}) => {
                                     { displayKIPCurrency(product?.price)  }</p>
                             </div>
                             <button className='text-sm bg-red-600 hover:bg-red-700
-                             text-white px-3 py-0.5 rounded-full' onClick={() => addToCart(product?._id)} >
+                             text-white px-3 py-0.5 rounded-full' onClick={(e) => addToCart(e.product?._id)} >
                                 Add to Cart
                             </button>
                     </div>
@@ -117,4 +105,4 @@ const VerticalCardProduct = ({category, heading}) => {
   )
 }
 
-export default VerticalCardProduct
+export default CategoryWiseProductDisplay

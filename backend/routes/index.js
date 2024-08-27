@@ -15,6 +15,7 @@ const getProductController = require('../controller/product/getProduct')
 const updateProductController = require('../controller/product/updateProduct')
 const getCategoryProduct = require('../controller/product/getCategoryProductOne')
 const getCategoryWiseProduct = require('../controller/product/getCategoryWiseProduct')
+const getProductDetails = require('../controller/product/getProductDetails')
 
 router.post("/signup",userSignUpController)
 router.post("/signin",userSignInController)
@@ -32,5 +33,7 @@ router.post("/update-product",authToken,updateProductController)
 //getproduct to homepage
 router.get("/get-categoryProduct",getCategoryProduct)
 router.post("/category-product",getCategoryWiseProduct)
+//product detail
+router.post("/product-details",getProductDetails)
 
 module.exports = router

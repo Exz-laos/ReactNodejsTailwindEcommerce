@@ -1,3 +1,5 @@
+
+
 const backendDomain = "http://localhost:8080"
 
 const SummaryApi ={
@@ -40,7 +42,12 @@ const SummaryApi ={
     categoryProduct : {
         url : `${backendDomain}/api/get-categoryProduct` ,
         method: "get"
+    },
+    categoryWiseProduct : {
+        url : `${backendDomain}/api/category-product` ,
+        method: "post"
     }
+
 
 
   

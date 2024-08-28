@@ -4,6 +4,7 @@ import displayKIPCurrency from '../helpers/displayCurrency'
 import addToCart from '../helpers/addToCart'
 import { Link } from 'react-router-dom'
 import Context from '../context'
+import scrollTop from '../helpers/scrollTop'
 const CategoryWiseProductDisplay = ({category, heading}) => {
     const [data,setData] = useState([])
     const [loading,setLoading] = useState(true)
@@ -39,8 +40,7 @@ const CategoryWiseProductDisplay = ({category, heading}) => {
     <div className='container mx-auto px-4 my-6 relative'>
         <h2 className='text-2xl font-semibold py-4'>{heading}</h2>
       
-       <div className='grid grid-cols-[repeat(auto-fit,minmax(300px,320px))] 
-       justify-between md:gap-6 overflow-x-scroll scrollbar-none transition-all'
+       <div className='grid grid-cols-[repeat(auto-fit,minmax(260px,300px))] justify-center md:justify-between md:gap-4 overflow-x-scroll scrollbar-none transition-all'
         >
         {  
            loading ? (
@@ -72,9 +72,9 @@ const CategoryWiseProductDisplay = ({category, heading}) => {
            ):(
             data.map((product,index)=>{
                 return (
-                <Link to={`/product/${product?._id}`}
+                <Link to={"/product/" + product?._id}
                 className='w-full min-w-[280px] md:min-w-[320px] max-w-[280px] 
-                    md:max-w-[320px] bg-white rounded-sm shadow'>
+                    md:max-w-[320px] bg-white rounded-sm shadow' onClick={scrollTop}>
                     <div className='bg-slate-200 h-56 p-4 min-w-[280px] md:min-w-[145px] 
                      flex justify-center items-center'>
                             <img src={product.productImage[0]} 

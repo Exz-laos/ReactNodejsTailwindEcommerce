@@ -19,9 +19,13 @@ const Header = () => {
   const context = useContext(Context)
   const navigate = useNavigate()
   const searchInput = useLocation()
-  const [search,setSearch] = useState(searchInput?.search.split("=")[1])
 
-  console.log("search input : ",searchInput?.search.split("=")[1])
+  const URLSearch = new URLSearchParams(searchInput?.search)
+  const searchQuery = URLSearch.getAll("q")
+
+  const [search,setSearch] = useState(searchQuery)
+
+
 
  
 

@@ -3,6 +3,7 @@ import SummaryApi from '../common'
 import Context from '../context'
 import displayKIPCurrency from '../helpers/displayCurrency'
 import { MdDelete } from "react-icons/md";
+import {loadStripe} from '@stripe/stripe-js';
 const Cart = () => {
     const [data,setData] = useState([])
     const [loading,setLoading] = useState(false)
@@ -102,6 +103,62 @@ const Cart = () => {
             context.fetchUserAddToCart()
         }
     }
+
+    // const handlePayment  = async () => {
+   
+    //     // recreating the `Stripe` object on every render.
+    //     const stripePromise = await loadStripe(process.env.REACT_APP_STRIPE_PUBLIC_KEY);
+    //     const response = await fetch(SummaryApi.payment.url,{
+    //         method : SummaryApi.payment.method,
+    //         credentials : 'include',
+    //         headers : {
+    //             "content-type" : 'application/json'
+    //         },   
+    //         body: JSON.stringify({
+    //             cartItems : data
+    //         })
+    //      }
+    //     )
+    //     const responseData = await response.json()
+
+    //     if(responseData?.id){
+    //         stripePromise.redirectToCheckout({seasionId : responseData.id})
+    //     }
+    //     console.log("payment response: ", responseData)
+    // }
+   
+const stripePromise = loadStripe(process.env.REACT_APP_STRIPE_PUBLIC_KEY); // Initialize Stripe once
+
+const handlePayment = async () => {
+    try {
+        const stripe = await stripePromise; // Await for stripePromise here to get the Stripe object
+        const response = await fetch(SummaryApi.payment.url, {
+            method: SummaryApi.payment.method,
+            credentials: 'include',
+            headers: {
+                "content-type": 'application/json'
+            },
+            body: JSON.stringify({
+                cartItems: data
+            })
+        });
+
+        const responseData = await response.json();
+
+        if (responseData?.id) {
+            // Correctly use sessionId instead of seasionId
+            stripe.redirectToCheckout({ sessionId: responseData.id });
+        } else {
+            console.error('Error: session ID not found in response');
+        }
+    } catch (error) {
+        console.error('Error during payment:', error);
+    }
+}
+
+
+
+
     const totalQty = data.reduce((previousValue,currentValue)=> previousValue + currentValue.quantity,0)
     const totalPrice = data.reduce((preve,curr)=> preve + (curr.quantity * curr?.productId?.sellingPrice) ,0)
 
@@ -226,7 +283,9 @@ const Cart = () => {
                   }
              </div>
                {/***Summary*/}
-               <div  className='mt-5 lg:mt-0 w-full max-w-sm'>
+               {
+                data[0] && (
+                    <div  className='mt-5 lg:mt-0 w-full max-w-sm'>
                     {
                         loading ? (
                             <div className='h-36 bg-slate-200 border border-slate-300 animate-pulse'>
@@ -244,12 +303,16 @@ const Cart = () => {
                                 <p>{displayKIPCurrency(totalPrice)}</p>    
                             </div>
 
-                            <button className='bg-blue-600 p-2 text-white w-full mt-2'>Payment</button>
+                            <button className='bg-blue-600 p-2 text-white w-full mt-2'
+                            onClick={handlePayment}>Payment</button>
 
                         </div>
                         )
                     }
-               </div>
+                 </div>
+                )
+               }
+              
 
 
 
